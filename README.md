@@ -1,7 +1,7 @@
 Asynchronous Morale client API for node.js
 ===========================================
 
-[morale-node](http://github.com/jayharris/morale-node) is an asynchronous API wrapper for [Morale](http://www.teammorale.com).
+[morale-node](http://github.com/aranasoft/morale-node) is an asynchronous API wrapper for [Morale](http://www.teammorale.com).
 
 # Installation
 

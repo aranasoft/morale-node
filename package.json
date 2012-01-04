@@ -1,19 +1,26 @@
 { 
-  "name": "morale-node", 
+  "name": "morale", 
   "version": "0.0.1", 
   "description": "Async Morale client API for node.js.", 
-  "author": "Jay Harris", 
+  "author": {
+    "name": "Arana Software",
+    "url": "http://www.aranasoft.com",
+    "email": "info@aranasoft.com"
+  }
+  "contributors": {
+    "Jay Harris <jay@aranasoft.com>"
+  }
   "keywords": ["morale"], 
-  "homepage": "https://github.com/jayharris/morale-node", 
+  "homepage": "https://github.com/aranasoft/morale-node", 
   "repository": { 
     "type": "git", 
-    "url": "git://github.com/jayharris/morale-node.git"
+    "url": "git://github.com/aranasoft/morale-node.git"
   }, 
   "licenses": { 
     "type": "MIT", 
-    "url": "http://github.com/jayharris/morale-node/raw/master/LICENSE"
+    "url": "http://github.com/aranasoft/morale-node/raw/master/LICENSE"
   },
-  "dependencies": { 
+  "devDependencies": { 
     "vows": ">=0.6.0" 
   }, 
   "engines": {"node":">=0.4.0 < 0.7.0"}, 

@@ -1,1 +1,1 @@
-module.exports = require('./lib/morale-node');
+module.exports = require('./lib/morale');
