@@ -21,7 +21,7 @@ Your API key can be obtained from your profile in [Morale](http://www.teammorale
 
 ## Project API 
 
-        morale.getProjects(function (projectData) {
+        m.getProjects(function (projectData) {
 	      console.log(projectData);
         })
 
