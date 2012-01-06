@@ -12,11 +12,7 @@ Asynchronous Morale client API for node.js
 Your API key can be obtained from your profile in [Morale](http://www.teammorale.com).
 
         var morale = require('morale-node');
-
-        var m = new morale({
-          subdomain: 'api-test',
-          api_key: 'XfADs6yw0qshq2Svaf'
-        });
+        var m = new morale("subdomain", "api_key");
 
 
 ## Project API 
