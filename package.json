@@ -9,7 +9,7 @@
   }
   "contributors": {
     "Jay Harris <jay@aranasoft.com>"
-  }
+  },
   "keywords": ["morale"], 
   "homepage": "https://github.com/aranasoft/morale-node", 
   "repository": { 
@@ -21,7 +21,8 @@
     "url": "http://github.com/aranasoft/morale-node/raw/master/LICENSE"
   },
   "devDependencies": { 
-    "vows": ">=0.6.0" 
+    "vows": ">=0.6.0",
+    "nock": ">=0.7.0"
   }, 
   "engines": {"node":">=0.4.0 < 0.7.0"}, 
   "main": "./lib/morale"
