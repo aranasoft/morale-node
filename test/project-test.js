@@ -284,7 +284,8 @@ vows.describe('Project API Tests').addBatch({
         },
       },
     },
-  },
+  }
+}).addBatch({
   "with an invalid credentials": {
     topic: morale('invalid-account', 'someApiKey'),
     "retriving a list of projects": {
