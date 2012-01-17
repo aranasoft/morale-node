@@ -17,11 +17,42 @@ Your API key can be obtained from your profile in [Morale](http://www.teammorale
 
 ## Project API 
 
-        m.getProjects(function (projectData) {
+        m.getProjects(function (projectData, err) {
 	      console.log(projectData);
-        })
+        });
+
+
+        m.getProject(projectId, function (projectData, err) {
+	      console.log(projectData);
+        });
+
+
+        m.addProject({name: "My New Project"}, function (projectData, err) {
+	      console.log(projectData);
+        });
+
+
+        m.updateProject({id: projectId, name: "Updated Project Name"}, function (projectData, err) {
+	      console.log(projectData);
+        });
+
+
+        m.deleteProject(projectId, function (projectData, err) {
+	      console.log(projectData);
+        });
+
 
 ## Ticket API 
+
+        m.getTickets(projectId, function (ticketData, err) {
+          console.log(ticketData);
+        });
+
+
+        m.getTicket(projectId, ticketId, function (ticketData, err) {
+          console.log(ticketData);
+        });
+
 
 # Contributors
 
