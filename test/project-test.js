@@ -45,31 +45,64 @@ vows.describe('Project API Tests').addBatch({
       },
     },
     "retriving a project": {
-      topic: function(moraleApi) {
-        var projectId = 41200;
-        var nockResponseData = {
-          id: projectId,
-          name: "Test Project #1",
-          account_id: 1,
-          updated_at: "2011-09-01T18:49:25Z",
-          created_at: "2011-06-23T03:55:34Z"
-        };
+      "with a project that exists": {
+        topic: function(moraleApi) {
+          var projectId = 41200;
+          var nockResponseData = {
+            id: projectId,
+            name: "Test Project #1",
+            account_id: 1,
+            updated_at: "2011-09-01T18:49:25Z",
+            created_at: "2011-06-23T03:55:34Z"
+          };
 
-        nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId).reply(200, JSON.stringify(nockResponseData), {
-          'content-type': 'application/json'
-        });
-        moraleApi.getProject(projectId, this.callback);
+          nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId).reply(200, JSON.stringify(nockResponseData), {
+            'content-type': 'application/json'
+          });
+          moraleApi.getProject(projectId, this.callback);
+        },
+        "should not return an error": function(res, err) {
+          assert.isNull(err);
+        },
+        "should return the requested project": function(res, err) {
+          assert.isObject(res);
+          assert.include(res, "name");
+          assert.include(res, "account_id");
+          assert.include(res, "id");
+          assert.isNumber(res.id);
+          assert.equal(res.id, 41200);
+        },
       },
-      "should not return an error": function(res, err) {
-        assert.isNull(err);
-      },
-      "should return the requested project": function(res, err) {
-        assert.isObject(res);
-        assert.include(res, "name");
-        assert.include(res, "account_id");
-        assert.include(res, "id");
-        assert.isNumber(res.id);
-        assert.equal(res.id, 41200);
+      "with a project that does not exist": {
+        topic: function(moraleApi) {
+          var projectId = 41404;
+          var nockResponseData = {
+            error: "Project does not exist",
+          };
+
+          nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId).reply(404, JSON.stringify(nockResponseData), {
+            'content-type': 'application/json'
+          });
+          moraleApi.getProject(projectId, this.callback);
+        },
+        "should not return data": function(res, err) {
+          assert.isNull(res);
+        },
+        "should return an error": function(res, err) {
+          assert.isObject(err);
+        },
+        "should return an http 404 status code": function(res, err) {
+          assert.isObject(err);
+          assert.include(err, "statusCode");
+          assert.isNumber(err.statusCode);
+          assert.equal(err.statusCode, 404);
+        },
+        "should return a Project Not Found error message": function(res, err) {
+          assert.isObject(err);
+          assert.include(err, "message");
+          assert.isString(err.message);
+          assert.equal(err.message, "Project does not exist");
+        },
       },
     },
     "adding a project": {
