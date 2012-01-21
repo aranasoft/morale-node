@@ -3,13 +3,65 @@ var vows = require('vows'),
     nock = require('nock'),
     morale = require('../index.js');
 
+assert.exclude = function(actual, expected, message) {
+  if (!(function(obj) {
+    if (typeof obj === 'array' || typeof obj === 'string') {
+      return obj.indexOf(expected) === -1;
+    } else if (typeof obj === 'object') {
+      return !obj.hasOwnProperty(expected);
+    }
+    return true;
+  })(actual)) {
+    assert.fail(actual, expected, message || "expected {actual} to exclude {expected}", "exclude", assert.exclude);
+  }
+};
+assert.excludes = assert.exclude;
+
 vows.describe('Ticket API Tests').addBatch({
   "with a valid credentials": {
     topic: morale("valid-account", "someApiKey"),
-    "retriving a list of tickets": {
-      "with a project that exists": {
-        topic: function(moraleApi) {
-          var projectId = 60200;
+    "with a project that does not exist": {
+      topic: 10404,
+      "getting a list of tickets": {
+        topic: function(projectId, moraleApi) {
+          var nockResponseData = {
+            error: "Project does not exist",
+          };
+          nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets').reply(404, JSON.stringify(nockResponseData), {
+            'content-type': 'application/json'
+          });
+          moraleApi.getTickets(projectId, this.callback);
+        },
+        "should not return data": function(res, err) {
+          assert.isNull(res);
+        },
+        "should return an error": function(res, err) {
+          assert.isObject(err);
+        },
+        "should return an http 404 status code": function(res, err) {
+          assert.isObject(err);
+          assert.include(err, "statusCode");
+          assert.isNumber(err.statusCode);
+          assert.equal(err.statusCode, 404);
+        },
+        "should return a Project Not Found error message": function(res, err) {
+          assert.isObject(err);
+          assert.include(err, "message");
+          assert.isString(err.message);
+          assert.equal(err.message, "Project does not exist");
+        },
+      },
+"with a ticket that ticket that exists":{
+topic: 200200,	
+},
+"with a ticket that does not exist":{
+topic: 200404,	
+},
+    },
+    "with a project that does exist": {
+      topic: 100200,
+      "getting a list of tickets": {
+        topic: function(projectId, moraleApi) {
           var nockResponseData = [{
             task: {
               id: 1060200,
@@ -107,58 +159,29 @@ vows.describe('Ticket API Tests').addBatch({
           assert.isObject(res[0][ticketType]);
         },
       },
-      "with a project that does not exist": {
-        topic: function(moraleApi) {
-          var projectId = 60404;
-          var nockResponseData = {
-            error: "Project does not exist",
-          };
-
-          nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets').reply(404, JSON.stringify(nockResponseData), {
-            'content-type': 'application/json'
-          });
-          moraleApi.getTickets(projectId, this.callback);
-        },
-        "should not return data": function(res, err) {
-          assert.isNull(res);
-        },
-        "should return an error": function(res, err) {
-          assert.isObject(err);
-        },
-        "should return an http 404 status code": function(res, err) {
-          assert.isObject(err);
-          assert.include(err, "statusCode");
-          assert.isNumber(err.statusCode);
-          assert.equal(err.statusCode, 404);
-        },
-        "should return a Project Not Found error message": function(res, err) {
-          assert.isObject(err);
-          assert.include(err, "message");
-          assert.isString(err.message);
-          assert.equal(err.message, "Project does not exist");
-        },
-      },
-      "with an invalid projectId value": {
-        "should throw an error": function() {
-          assert.throws(function(moraleApi) {
-            moraleApi.getTickets("badProjectIdValue", this.callback);
-          }, Error);
-        },
-      },
     },
+	"with an invalid projectId value":{
+		"getting a list of tickets":{
+	        "should throw an error": function(moraleApi) {
+	          assert.throws(function() {
+	            moraleApi.getTickets("badProjectIdValue", this.callback);
+	          }, Error);
+	        },
+		}
+	},
     "retriving a specific ticket": {
       "with a project that exists": {
-		topic: 61200,
+        topic: 61200,
         "with a ticket that exists": {
           topic: function(projectId, moraleApi) {
-            var ticketId = 161200;
+            var ticketIdentifier = 161200;
             var nockResponseData = {
               id: 1161200,
               type: "task",
               title: "Create forgot password page",
               due_date: null,
               description: null,
-              identifier: ticketId,
+              identifier: ticketIdentifier,
               assigned_to: null,
               priority: 2,
               archived: false,
@@ -182,10 +205,10 @@ vows.describe('Ticket API Tests').addBatch({
               },
             };
 
-            nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketId).reply(200, JSON.stringify(nockResponseData), {
+            nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(200, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
             });
-            moraleApi.getTicket(projectId, ticketId, this.callback);
+            moraleApi.getTicket(projectId, ticketIdentifier, this.callback);
           },
           "should not return an error": function(res, err) {
             assert.isNull(err);
@@ -204,15 +227,15 @@ vows.describe('Ticket API Tests').addBatch({
         },
         "with a ticket that does not exist": {
           topic: function(projectId, moraleApi) {
-            var ticketId = 161404;
+            var ticketIdentifier = 161404;
             var nockResponseData = {
               error: "Ticket does not exist",
             };
 
-            nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketId).reply(404, JSON.stringify(nockResponseData), {
+            nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(404, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
             });
-            moraleApi.getTicket(projectId, ticketId, this.callback);
+            moraleApi.getTicket(projectId, ticketIdentifier, this.callback);
           },
           "should not return data": function(res, err) {
             assert.isNull(res);
@@ -244,15 +267,15 @@ vows.describe('Ticket API Tests').addBatch({
       "with a project that does not exist": {
         topic: function(moraleApi) {
           var projectId = 61404;
-          var ticketId = 161404;
+          var ticketIdentifier = 161404;
           var nockResponseData = {
             error: "Project does not exist",
           };
 
-          nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketId).reply(404, JSON.stringify(nockResponseData), {
+          nock('https://valid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(404, JSON.stringify(nockResponseData), {
             'content-type': 'application/json'
           });
-          moraleApi.getTicket(projectId, ticketId, this.callback);
+          moraleApi.getTicket(projectId, ticketIdentifier, this.callback);
         },
         "should not return data": function(res, err) {
           assert.isNull(res);
@@ -316,11 +339,11 @@ vows.describe('Ticket API Tests').addBatch({
     "retriving a specific ticket": {
       topic: function(moraleApi) {
         var projectId = 71401;
-        var taskId = 171401
-        nock('https://invalid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + taskId).reply(401, "", {
+        var ticketIdentifier = 171401
+        nock('https://invalid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(401, "", {
           'content-type': 'text/plain'
         });
-        moraleApi.getTicket(projectId, taskId, this.callback);
+        moraleApi.getTicket(projectId, ticketIdentifier, this.callback);
       },
       "should not return data": function(res, err) {
         assert.isNull(res);
@@ -342,4 +365,32 @@ vows.describe('Ticket API Tests').addBatch({
       },
     },
   },
+}).addBatch({
+  "building a ticket command string": {
+    topic: function(moraleApi) {
+      var ticket = {
+        type: "task",
+        title: "Create forgot password page",
+        due_date: null,
+        description: null,
+        identifier: 10,
+        assigned_to: "Jay",
+        priority: 2,
+        project_id: 101,
+      };
+      return morale('doesnt', 'matter')._buildTicketCommand(ticket);
+    },
+    "should include acceptable properties": function(topic) {
+      assert.include(topic, "type: task");
+      assert.include(topic, "title: Create forgot password page");
+      assert.include(topic, "description: ");
+      assert.include(topic, "due_date: ");
+      assert.include(topic, "assigned_to: Jay");
+      assert.include(topic, "priority: 2");
+    },
+    "should not include blocked properties": function(topic) {
+      assert.exclude(topic, "identifier: ");
+      assert.exclude(topic, "project_id: ");
+    },
+  }
 }).export(module);
