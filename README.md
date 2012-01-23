@@ -45,7 +45,7 @@ The ``error`` object is always an object containing two properties: ``statusCode
 
 #### Project Objects
 
-*For addProject and UpdateProject*  
+*For addProject and UpdateProject:*  
 These methods accept a Project JSON object with the following properties:  
 
 ``id``: Identity for the project to update. Used only in ``updateProject``.  
@@ -105,18 +105,19 @@ Output: ``projectData`` - a single project JSON object; the project, prior to it
 
 #### Ticket Objects
 
-*For addTicket and updateTicket*  
+*For addTicket and updateTicket:*  
 These methods accept a Ticket JSON object with the following properties:  
 
-* ``identifier``: The Morale UI Identifier for the ticket to update. Used only in ``updateTicket``.
-* ``title``: Title to give the project. Required for ``addTicket``.
-* ``type``: Ticket type; can be 'Task' or 'Bug'.
-* ``description``: The ticket's subtext / description.
-* ``due_date``: The date that the ticket is due for completion. Must be a string formatted as a
-specific date ('2/28/2012', 'June 5') or a relative date ('today', 'tomorrow', 'monday', 'next month').
-* ``assigned_to``: Person that the ticket is assigned to. Must be a string matching the first name,
-last name, or email address of a user associated with your project.
-* ``priority``: Numerical value of the priority of the ticket.
+``identifier``: The Morale UI Identifier for the ticket to update. Used only in ``updateTicket``.  
+``title``: Title to give the project. Required for ``addTicket``.  
+``type``: Ticket type; can be 'Task' or 'Bug'.  
+``description``: The ticket's subtext / description.  
+``due_date``: The date that the ticket is due for completion. Must be a string formatted as a
+specific date ('2/28/2012', 'June 5') or a relative date ('today', 'tomorrow', 'monday', 'next month').  
+``assigned_to``: Person that the ticket is assigned to. Must be a string matching the first name,
+last name, or email address of a user associated with your project.  
+``priority``: Numerical value of the priority of the ticket.
+
 
     {
       identifier: 5,
@@ -126,6 +127,7 @@ last name, or email address of a user associated with your project.
       due_date: "tomorrow",
       priority: 2,
     }
+
 
 #### Ticket Methods
 
@@ -188,5 +190,9 @@ Output: ``ticketData`` - a single ticket JSON object; the updated ticket.
 ## Contributors
 
 - [Jay Harris](http://github.com/JayHarris) (primary author)
+
+
+
+## License
 
 Released under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
