@@ -3,61 +3,107 @@ var vows = require('vows'),
     nock = require('nock'),
     morale = require('../index.js');
 
+require('./assert.js');
+
 vows.describe("Configuration Tests").addBatch({
-  "configuring Morale without specifying options": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale()
-      }, Error);
+  "with no key": {
+    topic: undefined,
+    "with no subdomain": {
+      topic: undefined,
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale without specifying a key": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale("sub-domain")
-      }, Error);
+  "with a null key": {
+    topic: null,
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale with a non-string subdomain": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale(5, "key")
-      }, Error);
+  "with an object key": {
+    topic: {},
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale with an empty-string subdomain": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale("", "key")
-      }, Error);
+  "with an array key": {
+    topic: {},
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale with a subdomain having invalid characters": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale("sub_domain", "key")
-      }, Error);
+  "with a function key": {
+    topic: function() {
+      return function() {
+        return "aValidKeyStuckInsideAFunction"
+      };
+    },
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale with a non-string key": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale("sub-domain", 5)
-      }, Error);
+  "with a numeric key": {
+    topic: 5,
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale with an empty-string key": {
-    "should fail": function() {
-      assert.throws(function() {
-        morale("sub-domain", "")
-      }, Error);
+  "with an empty key": {
+    topic: "",
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldFail(morale),
     },
   },
-  "configuring Morale with a non-empty string subdomain and non-empty string key": {
-    "should not fail": function(topic) {
-      assert.doesNotThrow(function() {
-        return morale("sub-domain", "key")
-      }, ReferenceError);
+  "with a valid key": {
+    topic: "abcdefg",
+    "with no subdomain": {
+      topic: undefined,
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a null subdomain": {
+      topic: null,
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a object subdomain": {
+      topic: {},
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with an array subdomain": {
+      topic: [],
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a function subdomain": {
+      topic: function() {
+        return function() {
+          return "aValidSubdomainStuckInsideAFunction"
+        };
+      },
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with an empty subdomain": {
+      topic: "",
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a numeric subdomain": {
+      topic: 5,
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a subdomain having invalid characters": {
+      topic: "sub^domain",
+      "configuring morale": assert.configurationShouldFail(morale),
+    },
+    "with a valid subdomain": {
+      topic: "sub-domain",
+      "configuring morale": assert.configurationShouldSucceed(morale),
     },
   },
 }).export(module);
