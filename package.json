@@ -1,7 +1,7 @@
 { 
   "name": "morale", 
-  "version": "0.0.1", 
-  "description": "Async Morale client API for node.js.", 
+  "version": "0.1.0", 
+  "description": "Async API wrapper for Morale (http://www.teammorale.com)", 
   "author": {
     "name": "Arana Software",
     "url": "http://www.aranasoft.com",
@@ -20,9 +20,12 @@
     "type": "MIT", 
     "url": "http://github.com/aranasoft/morale-node/raw/master/LICENSE"
   },
+  "dependencies": { 
+	"underscore": ">=1.3.0",
+  }, 
   "devDependencies": { 
     "vows": ">=0.6.0",
-    "nock": ">=0.7.0"
+    "nock": ">=0.7.0",
   }, 
   "engines": {"node":">=0.4.0 < 0.7.0"}, 
   "main": "./lib/morale"
