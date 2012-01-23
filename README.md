@@ -4,9 +4,9 @@
 
 ## Installation
 
-Morale-node is not yet available through NPM. It will be; and when it is, we will update the documentation.
+Morale-node is available through npm.
 
-For now, download it to *~/node_modules/morale_node* within your project.
+    npm install morale
 
 ## Usage
 
