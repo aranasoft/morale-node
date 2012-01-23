@@ -1,7 +1,7 @@
 { 
   "name": "morale", 
-  "version": "0.0.1", 
-  "description": "Async Morale client API for node.js.", 
+  "version": "0.0.8", 
+  "description": "Async API wrapper for Morale (http://www.teammorale.com)", 
   "author": {
     "name": "Arana Software",
     "url": "http://www.aranasoft.com",
