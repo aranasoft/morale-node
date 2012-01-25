@@ -824,6 +824,16 @@ vows.describe('Ticket API Tests').addBatch({
   },
 }).addBatch({
   "building a ticket command string": {
+	topic: function() {
+		var mockRunTicketCommand = function(projectId, command, callback)
+		{
+			return command;
+		};
+		var api = morale('doesnt', 'matter');
+		api.runTicketCommand = mockRunTicketCommand;
+		
+		return api;
+	},
     "with a ticket object": {
       topic: function(moraleApi) {
         var ticket = {
@@ -837,7 +847,7 @@ vows.describe('Ticket API Tests').addBatch({
           project_id: 101,
           someOtherKey: "someValue",
         };
-        return morale('doesnt', 'matter')._buildTicketCommand(ticket);
+        return moraleApi.updateTicket(ticket, function(){});
       },
       "should include acceptable properties": function(topic) {
         assert.include(topic, "type: task");
