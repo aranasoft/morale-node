@@ -1,6 +1,5 @@
 var vows = require('vows'),
     assert = require('assert'),
-    nock = require('nock'),
     morale = require('../index.js');
 
 require('./assert.js');
