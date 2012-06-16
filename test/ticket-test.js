@@ -1,6 +1,4 @@
-var vows = require('vows'),
-    assert = require('assert'),
-    nock = require('nock'),
+var nock = require('nock'),
     util = require('util'),
     morale = require('../index.js'),
     mocha = require('mocha'),
