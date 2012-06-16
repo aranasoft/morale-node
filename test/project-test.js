@@ -1,52 +1,60 @@
-var vows = require('vows'),
-    assert = require('assert'),
-    nock = require('nock'),
+var nock = require('nock'),
     util = require('util'),
-    morale = require('../index.js');
+    morale = require('../index.js'),
+    mocha = require('mocha'),
+    should = require('should');
 
-require('./assert.js');
+describe("When accessing the Project API", function() {
+  describe("with valid Morale credentials,", function() {
+    var moraleApi = morale("subdomain", "abcdefg");
 
-vows.describe('Project API Tests').addBatch({
-  "with valid credentials": {
-    topic: morale("subdomain", "abcdefg"),
-    "adding a project": {
-      topic: function(moraleApi) {
-        var project = {
-          name: "Test Project #3",
-        };
+    describe("adding a project", function() {
+      var project = {
+        name: "Test Project #3",
+      };
 
+      beforeEach(function(done) {
         if (nock) {
           var nockRequestData = {
             project: {
               name: project.name,
             },
-          },
-              nockResponseData = {
-              id: 1,
-              name: project.name,
-              account_id: 1,
-              updated_at: "2011-09-01T18:49:25Z",
-              created_at: "2011-06-23T03:55:34Z"
-              };
+          };
+          var nockResponseData = {
+            id: 1,
+            name: project.name,
+            account_id: 1,
+            updated_at: "2011-09-01T18:49:25Z",
+            created_at: "2011-06-23T03:55:34Z"
+          };
+
           nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects', JSON.stringify(nockRequestData)).reply(200, JSON.stringify(nockResponseData), {
             'content-type': 'application/json'
           });
         }
+        done();
+      });
 
-        moraleApi.addProject(project, this.callback);
-      },
-      "should not return an error": assert.noAsyncError(),
-      "should return the new project": function(res, err) {
-        assert.isObject(res);
-        assert.include(res, "name");
-        assert.isString(res.name);
-        assert.equal(res.name, "Test Project #3");
-        assert.include(res, "account_id");
-        assert.include(res, "id");
-      },
-    },
-    "retriving a list of projects": {
-      topic: function(moraleApi) {
+      it("should return without an error", function(done) {
+        moraleApi.addProject(project, done);
+      });
+      it("should return the new project", function(done) {
+        moraleApi.addProject(project, function(err, res) {
+          if (err) return done(err);
+          res.should.have.property("name", "Test Project #3");
+          res.should.have.property("account_id");
+          res.should.have.property("id");
+          done();
+        });
+      });
+    });
+
+    describe("retriving a list of projects", function() {
+      var project = {
+        name: "Test Project #3",
+      };
+
+      beforeEach(function(done) {
         if (nock) {
           var nockResponseData = [{
             project: {
@@ -68,25 +76,36 @@ vows.describe('Project API Tests').addBatch({
             'content-type': 'application/json'
           });
         }
+        done();
+      });
 
-        moraleApi.getProjects(this.callback);
-      },
-      "should not return an error": assert.noAsyncError(),
-      "should return a populated array": function(res, err) {
-        assert.isArray(res);
-        assert.isNotEmpty(res);
-      },
-      "should contain a project": function(res, err) {
-        assert.isArray(res);
-        assert.isNotEmpty(res);
-        assert.include(res[0], "project");
-        assert.isObject(res[0].project);
-      },
-    },
-    "with a project that exists": {
-      topic: 21200,
-      "retriving a project": {
-        topic: function(projectId, moraleApi) {
+      it("should return without an error", function(done) {
+        moraleApi.getProjects(done);
+      });
+      it("should return a populated array", function(done) {
+        moraleApi.getProjects(function(err, res) {
+          if (err) return done(err);
+          res.should.be.instanceOf(Array);
+          res.should.not.be.empty;
+          done();
+        });
+      });
+      it("should contain a project", function(done) {
+        moraleApi.getProjects(function(err, res) {
+          if (err) return done(err);
+          res.should.be.instanceOf(Array);
+          res.should.not.be.empty;
+          res[0].should.have.property("project");
+          done();
+        });
+      });
+    });
+
+    describe("and with a project that exists,", function() {
+      var projectId = 21200;
+
+      describe("retrieving a project", function() {
+        beforeEach(function(done) {
           if (nock) {
             var nockResponseData = {
               id: projectId,
@@ -99,26 +118,30 @@ vows.describe('Project API Tests').addBatch({
               'content-type': 'application/json'
             });
           }
+          done();
+        });
 
-          moraleApi.getProject(projectId, this.callback);
-        },
-        "should not return an error": assert.noAsyncError(),
-        "should return the requested project": function(res, err) {
-          assert.isObject(res);
-          assert.include(res, "name");
-          assert.include(res, "account_id");
-          assert.include(res, "id");
-          assert.isNumber(res.id);
-          assert.equal(res.id, this.context.topics[0]);
-        },
-      },
-      "updating a project": {
-        topic: function(projectId, moraleApi) {
-          var project = {
-            id: projectId,
-            name: "Test Project #4",
-          };
+        it("should return without an error", function(done) {
+          moraleApi.getProject(projectId, done);
+        });
+        it("should return the new project", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            if (err) return done(err);
+            res.should.have.property("name");
+            res.should.have.property("account_id");
+            res.should.have.property("id", projectId);
+            done();
+          });
+        });
+      });
 
+      describe("updating a project", function() {
+        var project = {
+          id: projectId,
+          name: "Test Project #4",
+        };
+
+        beforeEach(function(done) {
           if (nock) {
             var nockRequestData = {
               project: {
@@ -136,23 +159,25 @@ vows.describe('Project API Tests').addBatch({
               'content-type': 'application/json'
             });
           }
+          done();
+        });
 
-          moraleApi.updateProject(project, this.callback);
-        },
-        "should not return an error": assert.noAsyncError(),
-        "should return the updated project": function(res, err) {
-          assert.isObject(res);
-          assert.include(res, "name");
-          assert.isString(res.name);
-          assert.equal(res.name, "Test Project #4");
-          assert.include(res, "account_id");
-          assert.include(res, "id");
-          assert.isNumber(res.id);
-          assert.equal(res.id, this.context.topics[0]);
-        },
-      },
-      "deleting a project": {
-        topic: function(projectId, moraleApi) {
+        it("should return without an error", function(done) {
+          moraleApi.updateProject(project, done);
+        });
+        it("should return the new project", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            if (err) return done(err);
+            res.should.have.property("name", project.name);
+            res.should.have.property("account_id");
+            res.should.have.property("id", projectId);
+            done();
+          });
+        });
+      });
+
+      describe("deleting a project", function() {
+        beforeEach(function(done) {
           if (nock) {
             var nockResponseData = {
               id: projectId,
@@ -165,25 +190,30 @@ vows.describe('Project API Tests').addBatch({
               'content-type': 'application/json'
             });
           }
+          done();
+        });
 
-          moraleApi.deleteProject(projectId, this.callback);
-        },
-        "should not return an error": assert.noAsyncError(),
-        "should return the updated project": function(res, err) {
-          assert.isObject(res);
-          assert.include(res, "name");
-          assert.isString(res.name);
-          assert.include(res, "account_id");
-          assert.include(res, "id");
-          assert.isNumber(res.id);
-          assert.equal(res.id, this.context.topics[0]);
-        },
-      },
-    },
-    "with a project that does not exist": {
-      topic: 41404,
-      "retriving a project": {
-        topic: function(projectId, moraleApi) {
+        it("should return without an error", function(done) {
+          moraleApi.deleteProject(projectId, done);
+        });
+        it("should return the new project", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            if (err) return done(err);
+            res.should.have.property("name");
+            res.should.have.property("account_id");
+            res.should.have.property("id", projectId);
+            done();
+          });
+        });
+      });
+
+    });
+
+    describe("and with a project that does not exist,", function() {
+      var projectId = 41404;
+
+      describe("retrieving a project", function() {
+        beforeEach(function(done) {
           if (nock) {
             var nockResponseData = {
               error: "Project does not exist",
@@ -192,20 +222,38 @@ vows.describe('Project API Tests').addBatch({
               'content-type': 'application/json'
             });
           }
+          done();
+        });
 
-          moraleApi.getProject(projectId, this.callback);
-        },
-        "should not return data": assert.noAsyncResult(),
-        "should return an http 404 status code": assert.asyncStatusCode(404),
-        "should return a Project Not Found error message": assert.asyncStatusMessage("Project does not exist"),
-      },
-      "updating a project": {
-        topic: function(projectId, moraleApi) {
-          var project = {
-            id: projectId,
-            name: "Test Project #4",
-          };
+        it("should return a 404 code", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            should.exist(err);
+            err.should.have.status(404);
+            done();
+          });
+        });
+        it("should return a project not found", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            should.exist(err);
+            err.message.should.equal("Project does not exist");
+            done();
+          });
+        });
+        it("should not return data", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            should.not.exist(res);
+            done();
+          });
+        });
+      });
 
+      describe("updating a project", function() {
+        var project = {
+          id: projectId,
+          name: "Test Project #4",
+        };
+
+        beforeEach(function(done) {
           if (nock) {
             var nockRequestData = {
               project: {
@@ -219,14 +267,33 @@ vows.describe('Project API Tests').addBatch({
               'content-type': 'application/json'
             });
           }
-          moraleApi.updateProject(project, this.callback);
-        },
-        "should not return data": assert.noAsyncResult(),
-        "should return an http 404 status code": assert.asyncStatusCode(404),
-        "should return a Project Not Found error message": assert.asyncStatusMessage("Project does not exist"),
-      },
-      "deleting a project": {
-        topic: function(projectId, moraleApi) {
+          done();
+        });
+
+        it("should return a 404 code", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            should.exist(err);
+            err.should.have.status(404);
+            done();
+          });
+        });
+        it("should return a project not found", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            should.exist(err);
+            err.message.should.equal("Project does not exist");
+            done();
+          });
+        });
+        it("should not return data", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            should.not.exist(res);
+            done();
+          });
+        });
+      });
+
+      describe("deleting a project", function() {
+        beforeEach(function(done) {
           if (nock) {
             var nockResponseData = {
               error: "Project does not exist",
@@ -235,109 +302,223 @@ vows.describe('Project API Tests').addBatch({
               'content-type': 'application/json'
             });
           }
+          done();
+        });
 
-          moraleApi.deleteProject(projectId, this.callback);
-        },
-        "should not return data": assert.noAsyncResult(),
-        "should return an http 404 status code": assert.asyncStatusCode(404),
-        "should return a Project Not Found error message": assert.asyncStatusMessage("Project does not exist"),
-      },
-    },
-  },
-}).addBatch({
-  "with invalid credentials": {
-    topic: morale('invalid-account', 'someApiKey'),
-    "creating a project": {
-      topic: function(moraleApi) {
-        var project = {
-          name: "Project Should Not Get Created",
-        };
+        it("should return a 404 code", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            should.exist(err);
+            err.should.have.status(404);
+            done();
+          });
+        });
+        it("should return a project not found", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            should.exist(err);
+            err.message.should.equal("Project does not exist");
+            done();
+          });
+        });
+        it("should not return data", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            should.not.exist(res);
+            done();
+          });
+        });
+      });
 
+    });
+  });
+
+  describe('with invalid Morale credentials,', function() {
+    var moraleApi = morale("invalid-account", "invalidKey");
+
+    describe("adding a project", function() {
+      var project = {
+        name: "Test Project #3",
+      };
+
+      beforeEach(function(done) {
         if (nock) {
           var nockRequestData = {
             project: {
               name: project.name,
             },
           };
-          nock('https://invalid-account.teammorale.com').post('/api/v1/projects', JSON.stringify(nockRequestData)).reply(401, "", {
+          nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
           });
         }
+        done();
+      });
 
-        moraleApi.addProject(project, this.callback);
-      },
-      "should not return data": assert.noAsyncResult(),
-      "should return an http 401 status code": assert.asyncStatusCode(401),
-      "should return an http 401 error message": assert.asyncStatusMessage("Unauthorized"),
-    },
-    "retriving a list of projects": {
-      topic: function(moraleApi) {
+      it("should return a 401 code", function(done) {
+        moraleApi.addProject(project, function(err, res) {
+          should.exist(err);
+          err.should.have.status(401);
+          done();
+        });
+      });
+      it("should return an unauthorized message", function(done) {
+        moraleApi.addProject(project, function(err, res) {
+          should.exist(err);
+          err.message.should.equal("Unauthorized");
+          done();
+        });
+      });
+      it("should not return data", function(done) {
+        moraleApi.addProject(project, function(err, res) {
+          should.not.exist(res);
+          done();
+        });
+      });
+    });
+
+    describe("retriving a list of projects", function() {
+      var project = {
+        name: "Test Project #3",
+      };
+
+      beforeEach(function(done) {
         if (nock) {
-          nock('https://invalid-account.teammorale.com').get('/api/v1/projects').reply(401, "", {
+          nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects').reply(401, "", {
             'content-type': 'text/plain'
           });
         }
+        done();
+      });
 
-        moraleApi.getProjects(this.callback);
-      },
-      "should not return data": assert.noAsyncResult(),
-      "should return an http 401 status code": assert.asyncStatusCode(401),
-      "should return an http 401 error message": assert.asyncStatusMessage("Unauthorized"),
-    },
-    "with a valid projectId": {
-      topic: 12345,
-      "retriving a project": {
-        topic: function(projectId, moraleApi) {
+      it("should return a 401 code", function(done) {
+        moraleApi.getProjects(function(err, res) {
+          should.exist(err);
+          err.should.have.status(401);
+          done();
+        });
+      });
+      it("should return an unauthorized message", function(done) {
+        moraleApi.getProjects(function(err, res) {
+          should.exist(err);
+          err.message.should.equal("Unauthorized");
+          done();
+        });
+      });
+      it("should not return data", function(done) {
+        moraleApi.getProjects(function(err, res) {
+          should.not.exist(res);
+          done();
+        });
+      });
+    });
+
+    describe("and with any project id,", function() {
+      var projectId = 12345;
+
+      describe("retrieving a project", function() {
+        beforeEach(function(done) {
           if (nock) {
-            nock('https://invalid-account.teammorale.com').get('/api/v1/projects/' + projectId).reply(401, "", {
+            nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId).reply(401, "", {
               'content-type': 'text/plain'
             });
           }
+          done();
+        });
 
-          moraleApi.getProject(projectId, this.callback);
-        },
-        "should not return data": assert.noAsyncResult(),
-        "should return an http 401 status code": assert.asyncStatusCode(401),
-        "should return an http 401 error message": assert.asyncStatusMessage("Unauthorized"),
-      },
-      "updating a project": {
-        topic: function(projectId, moraleApi) {
-          var project = {
-            id: projectId,
-            name: "Project Should Not Get Created",
-          };
+        it("should return a 401 code", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            should.exist(err);
+            err.should.have.status(401);
+            done();
+          });
+        });
+        it("should return an unauthorized message", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            should.exist(err);
+            err.message.should.equal("Unauthorized");
+            done();
+          });
+        });
+        it("should not return data", function(done) {
+          moraleApi.getProject(projectId, function(err, res) {
+            should.not.exist(res);
+            done();
+          });
+        });
+      });
 
+      describe("updating a project", function() {
+        var project = {
+          id: projectId,
+          name: "Project Should Not Get Created",
+        };
+
+        beforeEach(function(done) {
           if (nock) {
             var nockRequestData = {
               project: {
                 name: project.name,
               },
             };
-            nock('https://invalid-account.teammorale.com').put('/api/v1/projects/' + project.id, JSON.stringify(nockRequestData)).reply(401, "", {
+            nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).put('/api/v1/projects/' + project.id, JSON.stringify(nockRequestData)).reply(401, "", {
               'content-type': 'text/plain'
             });
           }
+          done();
+        });
 
-          moraleApi.updateProject(project, this.callback);
-        },
-        "should not return data": assert.noAsyncResult(),
-        "should return an http 401 status code": assert.asyncStatusCode(401),
-        "should return an http 401 error message": assert.asyncStatusMessage("Unauthorized"),
-      },
-      "deleting a project": {
-        topic: function(projectId, moraleApi) {
+        it("should return a 401 code", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            should.exist(err);
+            err.should.have.status(401);
+            done();
+          });
+        });
+        it("should return an unauthorized message", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            should.exist(err);
+            err.message.should.equal("Unauthorized");
+            done();
+          });
+        });
+        it("should not return data", function(done) {
+          moraleApi.updateProject(project, function(err, res) {
+            should.not.exist(res);
+            done();
+          });
+        });
+      });
+
+      describe("deleting a project", function() {
+        beforeEach(function(done) {
           if (nock) {
-            nock('https://invalid-account.teammorale.com').delete('/api/v1/projects/' + projectId).reply(401, "", {
+            nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).delete('/api/v1/projects/' + projectId).reply(401, "", {
               'content-type': 'text/plain'
             });
           }
+          done();
+        });
 
-          moraleApi.deleteProject(projectId, this.callback);
-        },
-        "should not return data": assert.noAsyncResult(),
-        "should return an http 401 status code": assert.asyncStatusCode(401),
-        "should return an http 401 error message": assert.asyncStatusMessage("Unauthorized"),
-      },
-    },
-  },
-}).export(module);
+        it("should return a 401 code", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            should.exist(err);
+            err.should.have.status(401);
+            done();
+          });
+        });
+        it("should return an unauthorized message", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            should.exist(err);
+            err.message.should.equal("Unauthorized");
+            done();
+          });
+        });
+        it("should not return data", function(done) {
+          moraleApi.deleteProject(projectId, function(err, res) {
+            should.not.exist(res);
+            done();
+          });
+        });
+      });
+
+    });
+  });
+});

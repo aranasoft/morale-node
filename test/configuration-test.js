@@ -1,109 +1,148 @@
-var vows = require('vows'),
-    assert = require('assert'),
-    nock = require('nock'),
-    morale = require('../index.js');
+var morale = require('../index.js'),
+    mocha = require('mocha'),
+    should = require('should');
 
-require('./assert.js');
+describe("Configuring Morale", function() {
+  configuringMorale = function(subdomain, key) {
+    return function() {
+      return morale(subdomain, key)
+    }
+  };
 
-vows.describe("Configuration Tests").addBatch({
-  "with no key": {
-    topic: undefined,
-    "with no subdomain": {
-      topic: undefined,
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with a null key": {
-    topic: null,
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with an object key": {
-    topic: {},
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with an array key": {
-    topic: {},
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with a function key": {
-    topic: function() {
-      return function() {
-        return "aValidKeyStuckInsideAFunction"
+  describe("with no key", function() {
+    //var key = undefined;
+    describe("and with no subdomain", function() {
+      //var subdomain = undefined;
+      it("should fail", function() {
+        configuringMorale().should.
+        throw ();
+      });
+    });
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain).should.
+        throw (/invalid key/i);
+      });
+    });
+  });
+
+  describe("with a null key", function() {
+    var key = null;
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid key/i);
+      });
+    });
+  });
+
+  describe("with an object key", function() {
+    var key = {};
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid key/i);
+      });
+    });
+  });
+
+  describe("with a function key", function() {
+    var key = function() {
+      return "abcdefg"
+    };
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid key/i);
+      });
+    });
+  });
+
+  describe("with a numeric key", function() {
+    var key = 5;
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid key/i);
+      });
+    });
+  });
+
+  describe("with an empty key", function() {
+    var key = "";
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid key/i);
+      });
+    });
+  });
+
+  describe("with a valid key", function() {
+    var key = "abcdefg";
+    describe("and with no subdomain", function() {
+      //var subdomain = undefined;
+      it("should fail", function() {
+        configuringMorale(undefined, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with a null subdomain", function() {
+      var subdomain = null;
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with an object subdomain", function() {
+      var subdomain = {};
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with a function subdomain", function() {
+      var subdomain = function() {
+        return "sub-domain"
       };
-    },
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with a numeric key": {
-    topic: 5,
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with an empty key": {
-    topic: "",
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-  },
-  "with a valid key": {
-    topic: "abcdefg",
-    "with no subdomain": {
-      topic: undefined,
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a null subdomain": {
-      topic: null,
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a object subdomain": {
-      topic: {},
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with an array subdomain": {
-      topic: [],
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a function subdomain": {
-      topic: function() {
-        return function() {
-          return "aValidSubdomainStuckInsideAFunction"
-        };
-      },
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with an empty subdomain": {
-      topic: "",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a numeric subdomain": {
-      topic: 5,
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a subdomain having invalid characters": {
-      topic: "sub^domain",
-      "configuring morale": assert.configurationShouldFail(morale),
-    },
-    "with a valid subdomain": {
-      topic: "sub-domain",
-      "configuring morale": assert.configurationShouldSucceed(morale),
-    },
-  },
-}).export(module);
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with a numeric subdomain", function() {
+      var subdomain = 5;
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with an empty subdomain", function() {
+      var subdomain = "";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with a subdomain containing invalid characters", function() {
+      var subdomain = "sub^domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.
+        throw (/invalid subdomain/i);
+      });
+    });
+    describe("and with a valid subdomain", function() {
+      var subdomain = "sub-domain";
+      it("should fail", function() {
+        configuringMorale(subdomain, key).should.not.
+        throw ();
+      });
+    });
+  });
+});
