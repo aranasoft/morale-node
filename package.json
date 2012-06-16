@@ -1,13 +1,13 @@
 {
   "name": "morale",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Async API wrapper for Morale (http://www.teammorale.com)",
   "author": "Arana Software <info@aranasoft.com> (http://www.aranasoft.com)",
   "contributors": [
     "Jay Harris <jay@aranasoft.com>"
   ],
   "keywords": [
-    "morale"
+    "morale", "tasks"
   ],
   "homepage": "https://github.com/aranasoft/morale-node",
   "bugs": {
@@ -30,7 +30,7 @@
     "nock": ">=0.7.0"
   },
   "engines": {
-    "node": ">=0.4.7"
+    "node": ">=0.6.0"
   },
   "main": "./lib/morale",
   "optionalDependencies": {},
