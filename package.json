@@ -2,44 +2,31 @@
   "name": "morale",
   "version": "0.2.2",
   "description": "Async API wrapper for Morale (http://www.teammorale.com)",
-  "author": "Arana Software <info@aranasoft.com> (http://www.aranasoft.com)",
-  "contributors": [
-    "Jay Harris <jay@aranasoft.com>"
-  ],
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "nock": "~0.13.7"
+  },
+  "devDependencies": {
+    "mocha": "~1.8.1",
+    "should": "~1.2.1",
+    "underscore": "~1.4.3"
+  },
   "keywords": [
     "morale",
-    "tasks"
+    "test"
   ],
-  "homepage": "https://github.com/aranasoft/morale-node",
-  "bugs": {
-    "url": "https://github.com/aranasoft/morale-node/issues"
+  "author": "Jay Harris",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "11b2d0ed0200f566979dee01d4861f90c3659660",
+  "scripts": {
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/aranasoft/morale-node.git"
-  },
-  "licenses": {
-    "type": "MIT",
-    "url": "http://github.com/aranasoft/morale-node/raw/master/LICENSE"
-  },
-  "dependencies": {
-    "underscore": ">=1.3.0"
-  },
-  "devDependencies": {
-    "mocha": ">=1.0.0",
-    "should": ">=0.6.0",
-    "nock": ">=0.7.0"
-  },
-  "optionalDependencies": {},
-  "engines": {
-    "node": ">=0.6.0"
-  },
-  "main": "./lib/morale",
-  "scripts": {
-    "test": "make test"
-  },
-  "readmeFilename": "README.md",
-  "directories": {
-    "test": "test"
+    "url": "git://github.com/jayharris/morale-node.git"
   }
 }

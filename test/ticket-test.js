@@ -14,82 +14,84 @@ describe("When accessing the Ticket API", function () {
       describe("getting a list of tickets", function () {
         beforeEach(function (done) {
           if (nock) {
-            var nockResponseData = [{
-              task: {
-                id: 1060200,
-                type: "task",
-                title: "Create forgot password page",
-                due_date: null,
-                description: null,
-                identifier: 160200,
-                assigned_to: null,
-                priority: 2,
-                archived: false,
-                project_id: projectId,
-                updated_at: "2011-09-01T18:49:25Z",
-                created_at: "2011-06-23T03:55:34Z",
-                created_by: {
-                  user: {
-                    id: 1234,
-                    first_name: 'Jimmy',
-                    last_name: 'Page',
-                    email: 'jimmy@example.com',
-                    time_zone: 'Eastern Time (US & Canada)',
-                    created_at: '2011-07-15T11:30:36-04:00',
-                    updated_at: '2012-01-01T12:04:21-05:00',
-                    avatar_file_size: 12345,
-                    avatar_file_name: 'MyPhoto.png',
-                    avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
-                  }
-                }
-              }
-            },
-            {
-              bug: {
-                id: 2160200,
-                type: "bug",
-                title: "Performance issue with retrieving the current project",
-                due_date: null,
-                description: null,
-                identifier: 260200,
-                assigned_to: {
-                  user: {
-                    id: 1234,
-                    first_name: 'Jimmy',
-                    last_name: 'Page',
-                    email: 'jimmy@example.com',
-                    time_zone: 'Eastern Time (US & Canada)',
-                    created_at: '2011-07-15T11:30:36-04:00',
-                    updated_at: '2012-01-01T12:04:21-05:00',
-                    avatar_file_size: 12345,
-                    avatar_file_name: 'MyPhoto.png',
-                    avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+            var nockResponseData = [
+                {
+                  task: {
+                    id: 1060200,
+                    type: "task",
+                    title: "Create forgot password page",
+                    due_date: null,
+                    description: null,
+                    identifier: 160200,
+                    assigned_to: null,
+                    priority: 2,
+                    archived: false,
+                    project_id: projectId,
+                    updated_at: "2011-09-01T18:49:25Z",
+                    created_at: "2011-06-23T03:55:34Z",
+                    created_by: {
+                      user: {
+                        id: 1234,
+                        first_name: 'Jimmy',
+                        last_name: 'Page',
+                        email: 'jimmy@example.com',
+                        time_zone: 'Eastern Time (US & Canada)',
+                        created_at: '2011-07-15T11:30:36-04:00',
+                        updated_at: '2012-01-01T12:04:21-05:00',
+                        avatar_file_size: 12345,
+                        avatar_file_name: 'MyPhoto.png',
+                        avatar_content_type: 'image/png',
+                        avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                      }
+                    }
                   }
                 },
-                priority: 2,
-                archived: false,
-                project_id: projectId,
-                updated_at: "2011-10-01T16:29:29Z",
-                created_at: "2011-06-25T03:25:32Z",
-                created_by: {
-                  user: {
-                    id: 1234,
-                    first_name: 'Jimmy',
-                    last_name: 'Page',
-                    email: 'jimmy@example.com',
-                    time_zone: 'Eastern Time (US & Canada)',
-                    created_at: '2011-07-15T11:30:36-04:00',
-                    updated_at: '2012-01-01T12:04:21-05:00',
-                    avatar_file_size: 12345,
-                    avatar_file_name: 'MyPhoto.png',
-                    avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                {
+                  bug: {
+                    id: 2160200,
+                    type: "bug",
+                    title: "Performance issue with retrieving the current project",
+                    due_date: null,
+                    description: null,
+                    identifier: 260200,
+                    assigned_to: {
+                      user: {
+                        id: 1234,
+                        first_name: 'Jimmy',
+                        last_name: 'Page',
+                        email: 'jimmy@example.com',
+                        time_zone: 'Eastern Time (US & Canada)',
+                        created_at: '2011-07-15T11:30:36-04:00',
+                        updated_at: '2012-01-01T12:04:21-05:00',
+                        avatar_file_size: 12345,
+                        avatar_file_name: 'MyPhoto.png',
+                        avatar_content_type: 'image/png',
+                        avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                      }
+                    },
+                    priority: 2,
+                    archived: false,
+                    project_id: projectId,
+                    updated_at: "2011-10-01T16:29:29Z",
+                    created_at: "2011-06-25T03:25:32Z",
+                    created_by: {
+                      user: {
+                        id: 1234,
+                        first_name: 'Jimmy',
+                        last_name: 'Page',
+                        email: 'jimmy@example.com',
+                        time_zone: 'Eastern Time (US & Canada)',
+                        created_at: '2011-07-15T11:30:36-04:00',
+                        updated_at: '2012-01-01T12:04:21-05:00',
+                        avatar_file_size: 12345,
+                        avatar_file_name: 'MyPhoto.png',
+                        avatar_content_type: 'image/png',
+                        avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                      }
+                    }
                   }
                 }
-              }
-            }];
+              ];
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId + '/tickets').reply(200, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
             });
@@ -360,10 +362,10 @@ describe("When accessing the Ticket API", function () {
             moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
               if (err) { return done(err); }
               res.should.have.property("id").above(0);
-              res.should.have.property("title").with.a("string");
-              res.should.have.property("type").with.a("string");
+              res.should.have.property("title")["with"].a("string");
+              res.should.have.property("type")["with"].a("string");
               res.should.have.property("description");
-              res.should.have.property("archived").with.true;
+              res.should.have.property("archived")["with"]["true"];
               res.should.have.property("identifier", ticketIdentifier);
               res.should.have.property("project_id", projectId);
               done();
@@ -421,8 +423,8 @@ describe("When accessing the Ticket API", function () {
             moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
               if (err) { return done(err); }
               res.should.have.property("id").above(0);
-              res.should.have.property("title").with.a("string");
-              res.should.have.property("type").with.a("string");
+              res.should.have.property("title")["with"].a("string");
+              res.should.have.property("type")["with"].a("string");
               res.should.have.property("description");
               res.should.have.property("identifier", ticketIdentifier);
               res.should.have.property("project_id", projectId);
@@ -482,10 +484,10 @@ describe("When accessing the Ticket API", function () {
             moraleApi.runTicketCommand(projectId, commandString, function (err, res) {
               if (err) { return done(err); }
               res.should.have.property("id").above(0);
-              res.should.have.property("title").with.a("string");
-              res.should.have.property("type").with.a("string");
+              res.should.have.property("title")["with"].a("string");
+              res.should.have.property("type")["with"].a("string");
               res.should.have.property("description");
-              res.should.have.property("archived").with.true;
+              res.should.have.property("archived")["with"]["true"];
               res.should.have.property("identifier", ticketIdentifier);
               res.should.have.property("project_id", projectId);
               done();
@@ -538,32 +540,29 @@ describe("When accessing the Ticket API", function () {
             done();
           });
 
-          it("should return a 404 code"
-/*, function (done) {  //Bug in Morale
+          it("should return a 404 code");
+          /*it("should return a 404 code", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
 						});
-					}*/
-          );
-          it("should return a project not found"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should return a project not found");
+          /*it("should return a project not found", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
 						});
-					}*/
-          );
-          it("should not return data"
-/*, function (done) {  //Bug in Morale
+          );*/
+          it("should not return data");
+          /*it("should not return data", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
-					}*/
-          );
+					};*/
         });
 
         describe("archiving a ticket", function () {
@@ -572,32 +571,29 @@ describe("When accessing the Ticket API", function () {
             done();
           });
 
-          it("should return a 404 code"
-/*, function (done) {  //Bug in Morale
+          it("should return a 404 code");
+          /*it("should return a 404 code", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
 						});
-					}*/
-          );
-          it("should return a project not found"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should return a project not found");
+          /*it("should return a project not found", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
 						});
-					}*/
-          );
-          it("should not return data"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should not return data");
+          /*it("should not return data", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
-					}*/
-          );
+					};*/
         });
 
         describe("deleting a ticket", function () {
@@ -606,32 +602,29 @@ describe("When accessing the Ticket API", function () {
             done();
           });
 
-          it("should return a 404 code"
-/*, function (done) {  //Bug in Morale
+          it("should return a 404 code");
+          /*it("should return a 404 code", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
 						});
-					}*/
-          );
-          it("should return a project not found"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should return a project not found");
+          /*it("should return a project not found", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
 						});
-					}*/
-          );
-          it("should not return data"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should not return data");
+          /*it("should not return data", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
-					}*/
-          );
+					};*/
         });
 
         describe("running a ticket command", function () {
@@ -640,32 +633,29 @@ describe("When accessing the Ticket API", function () {
             done();
           });
 
-          it("should return a 404 code"
-/*, function (done) {  //Bug in Morale
+          it("should return a 404 code");
+          /*it("should return a 404 code", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
 						});
-					}*/
-          );
-          it("should return a project not found"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should return a project not found");
+          /*it("should return a project not found", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
 						});
-					}*/
-          );
-          it("should not return data"
-/*, function (done) {  //Bug in Morale
+					};*/
+          it("should not return data");
+          /*it("should not return data", function (done) {  //Bug in Morale
 						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
-					}*/
-          );
+					};*/
         });
       });
 
@@ -679,7 +669,7 @@ describe("When accessing the Ticket API", function () {
                 console.log("This should not run");
               });
             };
-            getTicketWrapper.should.throw("FAIL: INVALID TICKETID");
+            getTicketWrapper.should["throw"]("FAIL: INVALID TICKETID");
           });
         });
       });
@@ -941,7 +931,7 @@ describe("When accessing the Ticket API", function () {
               console.log("This should not run");
             });
           };
-          getTicketWrapper.should.throw("FAIL: INVALID PROJECTID");
+          getTicketWrapper.should["throw"]("FAIL: INVALID PROJECTID");
         });
       });
 
@@ -954,7 +944,7 @@ describe("When accessing the Ticket API", function () {
               console.log("This should not run");
             });
           };
-          getTicketWrapper.should.throw("FAIL: INVALID PROJECTID");
+          getTicketWrapper.should["throw"]("FAIL: INVALID PROJECTID");
         });
       });
     });

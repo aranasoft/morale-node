@@ -8,4 +8,10 @@ watch:
 		--growl \
 		--watch
 
-.PHONY: test watch
+lint:
+	@jshint --config jshint-config.json \
+		./lib/morale.js
+	@jshint --config jshint-config.json \
+		./test/*.js
+
+.PHONY: test watch lint
