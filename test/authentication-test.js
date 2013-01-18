@@ -26,7 +26,7 @@ describe("When requesting an API Key against Morale", function() {
       });
       it("should return an API token", function(done) {
         morale.GetApiToken(subdomain, email, password, function(err, res) {
-          if (err) return done(err);
+          if (err) { return done(err); }
           res.should.have.property("api_key", apiKey);
           done();
         });

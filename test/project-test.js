@@ -10,15 +10,15 @@ describe("When accessing the Project API", function() {
 
     describe("adding a project", function() {
       var project = {
-        name: "Test Project #3",
+        name: "Test Project #3"
       };
 
       beforeEach(function(done) {
         if (nock) {
           var nockRequestData = {
             project: {
-              name: project.name,
-            },
+              name: project.name
+            }
           };
           var nockResponseData = {
             id: 1,
@@ -40,7 +40,7 @@ describe("When accessing the Project API", function() {
       });
       it("should return the new project", function(done) {
         moraleApi.addProject(project, function(err, res) {
-          if (err) return done(err);
+          if (err) { return done(err); }
           res.should.have.property("name", "Test Project #3");
           res.should.have.property("account_id");
           res.should.have.property("id");
@@ -51,7 +51,7 @@ describe("When accessing the Project API", function() {
 
     describe("retriving a list of projects", function() {
       var project = {
-        name: "Test Project #3",
+        name: "Test Project #3"
       };
 
       beforeEach(function(done) {
@@ -84,7 +84,7 @@ describe("When accessing the Project API", function() {
       });
       it("should return a populated array", function(done) {
         moraleApi.getProjects(function(err, res) {
-          if (err) return done(err);
+          if (err) { return done(err); }
           res.should.be.instanceOf(Array);
           res.should.not.be.empty;
           done();
@@ -92,7 +92,7 @@ describe("When accessing the Project API", function() {
       });
       it("should contain a project", function(done) {
         moraleApi.getProjects(function(err, res) {
-          if (err) return done(err);
+          if (err) { return done(err); }
           res.should.be.instanceOf(Array);
           res.should.not.be.empty;
           res[0].should.have.property("project");
@@ -126,7 +126,7 @@ describe("When accessing the Project API", function() {
         });
         it("should return the new project", function(done) {
           moraleApi.getProject(projectId, function(err, res) {
-            if (err) return done(err);
+            if (err) { return done(err); }
             res.should.have.property("name");
             res.should.have.property("account_id");
             res.should.have.property("id", projectId);
@@ -138,15 +138,15 @@ describe("When accessing the Project API", function() {
       describe("updating a project", function() {
         var project = {
           id: projectId,
-          name: "Test Project #4",
+          name: "Test Project #4"
         };
 
         beforeEach(function(done) {
           if (nock) {
             var nockRequestData = {
               project: {
-                name: project.name,
-              },
+                name: project.name
+              }
             };
             var nockResponseData = {
               id: project.id,
@@ -167,7 +167,7 @@ describe("When accessing the Project API", function() {
         });
         it("should return the new project", function(done) {
           moraleApi.updateProject(project, function(err, res) {
-            if (err) return done(err);
+            if (err) { return done(err); }
             res.should.have.property("name", project.name);
             res.should.have.property("account_id");
             res.should.have.property("id", projectId);
@@ -198,7 +198,7 @@ describe("When accessing the Project API", function() {
         });
         it("should return the new project", function(done) {
           moraleApi.deleteProject(projectId, function(err, res) {
-            if (err) return done(err);
+            if (err) { return done(err); }
             res.should.have.property("name");
             res.should.have.property("account_id");
             res.should.have.property("id", projectId);
@@ -216,7 +216,7 @@ describe("When accessing the Project API", function() {
         beforeEach(function(done) {
           if (nock) {
             var nockResponseData = {
-              error: "Project does not exist",
+              error: "Project does not exist"
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId).reply(404, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -250,18 +250,18 @@ describe("When accessing the Project API", function() {
       describe("updating a project", function() {
         var project = {
           id: projectId,
-          name: "Test Project #4",
+          name: "Test Project #4"
         };
 
         beforeEach(function(done) {
           if (nock) {
             var nockRequestData = {
               project: {
-                name: project.name,
-              },
+                name: project.name
+              }
             };
             var nockResponseData = {
-              error: "Project does not exist",
+              error: "Project does not exist"
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).put('/api/v1/projects/' + project.id, JSON.stringify(nockRequestData)).reply(404, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -296,7 +296,7 @@ describe("When accessing the Project API", function() {
         beforeEach(function(done) {
           if (nock) {
             var nockResponseData = {
-              error: "Project does not exist",
+              error: "Project does not exist"
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).delete('/api/v1/projects/' + projectId).reply(404, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -335,15 +335,15 @@ describe("When accessing the Project API", function() {
 
     describe("adding a project", function() {
       var project = {
-        name: "Test Project #3",
+        name: "Test Project #3"
       };
 
       beforeEach(function(done) {
         if (nock) {
           var nockRequestData = {
             project: {
-              name: project.name,
-            },
+              name: project.name
+            }
           };
           nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
@@ -376,7 +376,7 @@ describe("When accessing the Project API", function() {
 
     describe("retriving a list of projects", function() {
       var project = {
-        name: "Test Project #3",
+        name: "Test Project #3"
       };
 
       beforeEach(function(done) {
@@ -448,15 +448,15 @@ describe("When accessing the Project API", function() {
       describe("updating a project", function() {
         var project = {
           id: projectId,
-          name: "Project Should Not Get Created",
+          name: "Project Should Not Get Created"
         };
 
         beforeEach(function(done) {
           if (nock) {
             var nockRequestData = {
               project: {
-                name: project.name,
-              },
+                name: project.name
+              }
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).put('/api/v1/projects/' + project.id, JSON.stringify(nockRequestData)).reply(401, "", {
               'content-type': 'text/plain'

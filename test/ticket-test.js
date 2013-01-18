@@ -1,18 +1,18 @@
 var nock = require('nock'),
-    util = require('util'),
-    morale = require('../index.js'),
-    mocha = require('mocha'),
-    should = require('should');
+  util = require('util'),
+  morale = require('../index.js'),
+  mocha = require('mocha'),
+  should = require('should');
 
-describe("When accessing the Ticket API", function() {
-  describe("with valid Morale credentials,", function() {
+describe("When accessing the Ticket API", function () {
+  describe("with valid Morale credentials,", function () {
     var moraleApi = morale("subdomain", "abcdefg");
 
-    describe("and with a project that exists,", function() {
+    describe("and with a project that exists,", function () {
       var projectId = 21200;
 
-      describe("getting a list of tickets", function() {
-        beforeEach(function(done) {
+      describe("getting a list of tickets", function () {
+        beforeEach(function (done) {
           if (nock) {
             var nockResponseData = [{
               task: {
@@ -40,10 +40,10 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
-              },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
+              }
             },
             {
               bug: {
@@ -65,8 +65,8 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
                 },
                 priority: 2,
                 archived: false,
@@ -85,10 +85,10 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
-              },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
+              }
             }];
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId + '/tickets').reply(200, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -97,20 +97,20 @@ describe("When accessing the Ticket API", function() {
           done();
         });
 
-        it("should return without an error", function(done) {
+        it("should return without an error", function (done) {
           moraleApi.getTickets(projectId, done);
         });
-        it("should return a populated array", function(done) {
-          moraleApi.getTickets(projectId, function(err, res) {
-            if (err) return done(err);
+        it("should return a populated array", function (done) {
+          moraleApi.getTickets(projectId, function (err, res) {
+            if (err) { return done(err); }
             res.should.be.instanceOf(Array);
             res.should.not.be.empty;
             done();
           });
         });
-        it("should contain a task or bug ticket", function(done) {
-          moraleApi.getTickets(projectId, function(err, res) {
-            if (err) return done(err);
+        it("should contain a task or bug ticket", function (done) {
+          moraleApi.getTickets(projectId, function (err, res) {
+            if (err) { return done(err); }
             res.should.be.instanceOf(Array);
             res.should.not.be.empty;
             var ticketType = Object.getOwnPropertyNames(res[0])[0];
@@ -120,18 +120,18 @@ describe("When accessing the Ticket API", function() {
         });
       });
 
-      describe("adding a new ticket", function() {
+      describe("adding a new ticket", function () {
         var ticket = {
           type: "Bug",
           title: "A Brand New Ticket",
-          project_id: projectId,
+          project_id: projectId
         };
 
-        beforeEach(function(done) {
+        beforeEach(function (done) {
           if (nock) {
             var commandString = util.format("type: %s title: %s", ticket.type, ticket.title);
             var nockRequestData = {
-              command: commandString,
+              command: commandString
             };
             var nockResponseData = {
               id: 1162200,
@@ -158,9 +158,9 @@ describe("When accessing the Ticket API", function() {
                   avatar_file_size: 12345,
                   avatar_file_name: 'MyPhoto.png',
                   avatar_content_type: 'image/png',
-                  avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                },
-              },
+                  avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                }
+              }
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(200, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -169,12 +169,12 @@ describe("When accessing the Ticket API", function() {
           done();
         });
 
-        it("should return without an error", function(done) {
+        it("should return without an error", function (done) {
           moraleApi.addTicket(ticket, done);
         });
-        it("should return the new ticket", function(done) {
-          moraleApi.addTicket(ticket, function(err, res) {
-            if (err) return done(err);
+        it("should return the new ticket", function (done) {
+          moraleApi.addTicket(ticket, function (err, res) {
+            if (err) { return done(err); }
             res.should.have.property("id").above(0);
             res.should.have.property("title", ticket.title);
             res.should.have.property("type", ticket.type);
@@ -185,11 +185,11 @@ describe("When accessing the Ticket API", function() {
         });
       });
 
-      describe("and with a ticket that exists,", function() {
+      describe("and with a ticket that exists,", function () {
         var ticketIdentifier = 13;
 
-        describe("getting a ticket", function() {
-          beforeEach(function(done) {
+        describe("getting a ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var nockResponseData = {
                 id: 1161200,
@@ -216,9 +216,9 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(200, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -227,12 +227,12 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return without an error", function(done) {
+          it("should return without an error", function (done) {
             moraleApi.getTicket(projectId, ticketIdentifier, done);
           });
-          it("should return the requested ticket", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
-              if (err) return done(err);
+          it("should return the requested ticket", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
+              if (err) { return done(err); }
               res.should.have.property("id").above(0);
               res.should.have.property("title");
               res.should.have.property("type");
@@ -243,20 +243,20 @@ describe("When accessing the Ticket API", function() {
           });
         });
 
-        describe("updating a ticket", function() {
+        describe("updating a ticket", function () {
           var ticket = {
             type: "Task",
             title: "An Updated Ticket Title",
             description: "And we will add this new description",
             project_id: projectId,
-            identifier: ticketIdentifier,
+            identifier: ticketIdentifier
           };
 
-          beforeEach(function(done) {
+          beforeEach(function (done) {
             if (nock) {
               var commandString = util.format("#%s: type: %s title: %s description: %s", ticket.identifier, ticket.type, ticket.title, ticket.description);
               var nockRequestData = {
-                command: commandString,
+                command: commandString
               };
               var nockResponseData = {
                 id: 1162200,
@@ -283,9 +283,9 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(200, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -294,12 +294,12 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return without an error", function(done) {
+          it("should return without an error", function (done) {
             moraleApi.updateTicket(ticket, done);
           });
-          it("should return the requested ticket", function(done) {
-            moraleApi.updateTicket(ticket, function(err, res) {
-              if (err) return done(err);
+          it("should return the requested ticket", function (done) {
+            moraleApi.updateTicket(ticket, function (err, res) {
+              if (err) { return done(err); }
               res.should.have.property("id").above(0);
               res.should.have.property("title", ticket.title);
               res.should.have.property("type", ticket.type);
@@ -311,11 +311,11 @@ describe("When accessing the Ticket API", function() {
           });
         });
 
-        describe("archiving a ticket", function() {
-          beforeEach(function(done) {
+        describe("archiving a ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var nockRequestData = {
-                command: util.format("a #%s:", ticketIdentifier),
+                command: util.format("a #%s:", ticketIdentifier)
               };
               var nockResponseData = {
                 id: 1167200,
@@ -342,9 +342,9 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(200, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -353,12 +353,12 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return without an error", function(done) {
+          it("should return without an error", function (done) {
             moraleApi.archiveTicket(projectId, ticketIdentifier, done);
           });
-          it("should return the archived ticket", function(done) {
-            moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
-              if (err) return done(err);
+          it("should return the archived ticket", function (done) {
+            moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
+              if (err) { return done(err); }
               res.should.have.property("id").above(0);
               res.should.have.property("title").with.a("string");
               res.should.have.property("type").with.a("string");
@@ -371,12 +371,12 @@ describe("When accessing the Ticket API", function() {
           });
         });
 
-        describe("deleting a ticket", function() {
-          beforeEach(function(done) {
+        describe("deleting a ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var commandString = util.format("d #%s:", ticketIdentifier);
               var nockRequestData = {
-                command: commandString,
+                command: commandString
               };
               var nockResponseData = {
                 id: 1167200,
@@ -403,9 +403,9 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(200, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -414,12 +414,12 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return without an error", function(done) {
+          it("should return without an error", function (done) {
             moraleApi.deleteTicket(projectId, ticketIdentifier, done);
           });
-          it("should return the deleted ticket", function(done) {
-            moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
-              if (err) return done(err);
+          it("should return the deleted ticket", function (done) {
+            moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
+              if (err) { return done(err); }
               res.should.have.property("id").above(0);
               res.should.have.property("title").with.a("string");
               res.should.have.property("type").with.a("string");
@@ -431,13 +431,13 @@ describe("When accessing the Ticket API", function() {
           });
         });
 
-        describe("running a ticket command", function() {
+        describe("running a ticket command", function () {
           var commandString = util.format("archive #%s:", ticketIdentifier);
 
-          beforeEach(function(done) {
+          beforeEach(function (done) {
             if (nock) {
               var nockRequestData = {
-                command: commandString,
+                command: commandString
               };
               var nockResponseData = {
                 id: 1167200,
@@ -464,9 +464,9 @@ describe("When accessing the Ticket API", function() {
                     avatar_file_size: 12345,
                     avatar_file_name: 'MyPhoto.png',
                     avatar_content_type: 'image/png',
-                    avatar_updated_at: '2011-12-17T12:04:20-05:00',
-                  },
-                },
+                    avatar_updated_at: '2011-12-17T12:04:20-05:00'
+                  }
+                }
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(200, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -475,12 +475,12 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return without an error", function(done) {
+          it("should return without an error", function (done) {
             moraleApi.runTicketCommand(projectId, commandString, done);
           });
-          it("should return the affected ticket", function(done) {
-            moraleApi.runTicketCommand(projectId, commandString, function(err, res) {
-              if (err) return done(err);
+          it("should return the affected ticket", function (done) {
+            moraleApi.runTicketCommand(projectId, commandString, function (err, res) {
+              if (err) { return done(err); }
               res.should.have.property("id").above(0);
               res.should.have.property("title").with.a("string");
               res.should.have.property("type").with.a("string");
@@ -494,14 +494,14 @@ describe("When accessing the Ticket API", function() {
         });
       });
 
-      describe("and with a ticket that does not exist,", function() {
+      describe("and with a ticket that does not exist,", function () {
         var ticketIdentifier = 41404;
 
-        describe("getting a ticket", function() {
-          beforeEach(function(done) {
+        describe("getting a ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var nockResponseData = {
-                error: "Ticket does not exist",
+                error: "Ticket does not exist"
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(404, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -510,37 +510,37 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return a 404 code", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return a 404 code", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.should.have.status(404);
               done();
             });
           });
-          it("should return a project not found", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return a project not found", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.message.should.equal("Ticket does not exist");
               done();
             });
           });
-          it("should not return data", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should not return data", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
               should.not.exist(res);
               done();
             });
           });
         });
 
-        describe("updating a ticket", function() {
-          beforeEach(function(done) {
-            if (nock) {}
+        describe("updating a ticket", function () {
+          beforeEach(function (done) {
+            //if (nock) {}
             done();
           });
 
           it("should return a 404 code"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
@@ -548,8 +548,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should return a project not found"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
@@ -557,8 +557,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should not return data"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
@@ -566,15 +566,15 @@ describe("When accessing the Ticket API", function() {
           );
         });
 
-        describe("archiving a ticket", function() {
-          beforeEach(function(done) {
-            if (nock) {}
+        describe("archiving a ticket", function () {
+          beforeEach(function (done) {
+            //if (nock) {}
             done();
           });
 
           it("should return a 404 code"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
@@ -582,8 +582,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should return a project not found"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
@@ -591,8 +591,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should not return data"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
@@ -600,15 +600,15 @@ describe("When accessing the Ticket API", function() {
           );
         });
 
-        describe("deleting a ticket", function() {
-          beforeEach(function(done) {
-            if (nock) {}
+        describe("deleting a ticket", function () {
+          beforeEach(function (done) {
+            //if (nock) {}
             done();
           });
 
           it("should return a 404 code"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
@@ -616,8 +616,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should return a project not found"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
@@ -625,8 +625,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should not return data"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
@@ -634,15 +634,15 @@ describe("When accessing the Ticket API", function() {
           );
         });
 
-        describe("running a ticket command", function() {
-          beforeEach(function(done) {
-            if (nock) {}
+        describe("running a ticket command", function () {
+          beforeEach(function (done) {
+            //if (nock) {}
             done();
           });
 
           it("should return a 404 code"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.should.have.status(404);
 							done();
@@ -650,8 +650,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should return a project not found"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.exist(err);
 							err.message.should.equal("Ticket does not exist");
 							done();
@@ -659,8 +659,8 @@ describe("When accessing the Ticket API", function() {
 					}*/
           );
           it("should not return data"
-/*, function(done) {  //Bug in Morale
-						moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+/*, function (done) {  //Bug in Morale
+						moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
 							should.not.exist(res);
 							done();
 						});
@@ -669,31 +669,30 @@ describe("When accessing the Ticket API", function() {
         });
       });
 
-      describe("and with an invalid ticket identifier,", function() {
+      describe("and with an invalid ticket identifier,", function () {
         var ticketIdentifier = "invalid identifier";
 
-        describe("getting a ticket", function() {
-          it("should throw an error", function() {
-            var getTicketWrapper = function() {
-              return moraleApi.getTicket(projectId, ticketIdentifier, function() {
+        describe("getting a ticket", function () {
+          it("should throw an error", function () {
+            var getTicketWrapper = function () {
+              return moraleApi.getTicket(projectId, ticketIdentifier, function () {
                 console.log("This should not run");
-              })
+              });
             };
-            getTicketWrapper.should.
-            throw ("FAIL: INVALID TICKETID");
+            getTicketWrapper.should.throw("FAIL: INVALID TICKETID");
           });
         });
       });
     });
 
-    describe("and with a project that does not exist,", function() {
+    describe("and with a project that does not exist,", function () {
       var projectId = 21200;
 
-      describe("getting a list of tickets", function() {
-        beforeEach(function(done) {
+      describe("getting a list of tickets", function () {
+        beforeEach(function (done) {
           if (nock) {
             var nockResponseData = {
-              error: "Project does not exist",
+              error: "Project does not exist"
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId + '/tickets').reply(404, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -702,42 +701,42 @@ describe("When accessing the Ticket API", function() {
           done();
         });
 
-        it("should return a 404 code", function(done) {
-          moraleApi.getTickets(projectId, function(err, res) {
+        it("should return a 404 code", function (done) {
+          moraleApi.getTickets(projectId, function (err, res) {
             should.exist(err);
             err.should.have.status(404);
             done();
           });
         });
-        it("should return an unauthorized message", function(done) {
-          moraleApi.getTickets(projectId, function(err, res) {
+        it("should return an unauthorized message", function (done) {
+          moraleApi.getTickets(projectId, function (err, res) {
             should.exist(err);
             err.message.should.equal("Project does not exist");
             done();
           });
         });
-        it("should not return data", function(done) {
-          moraleApi.getTickets(projectId, function(err, res) {
+        it("should not return data", function (done) {
+          moraleApi.getTickets(projectId, function (err, res) {
             should.not.exist(res);
             done();
           });
         });
       });
 
-      describe("adding a new ticket", function() {
+      describe("adding a new ticket", function () {
         var ticket = {
           type: "task",
           title: "A Brand New Ticket",
-          project_id: projectId,
+          project_id: projectId
         };
 
-        beforeEach(function(done) {
+        beforeEach(function (done) {
           if (nock) {
             var nockRequestData = {
-              command: util.format("type: %s title: %s", ticket.type, ticket.title),
+              command: util.format("type: %s title: %s", ticket.type, ticket.title)
             };
             var nockResponseData = {
-              error: "Project does not exist",
+              error: "Project does not exist"
             };
             nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(404, JSON.stringify(nockResponseData), {
               'content-type': 'application/json'
@@ -746,36 +745,36 @@ describe("When accessing the Ticket API", function() {
           done();
         });
 
-        it("should return a 404 code", function(done) {
-          moraleApi.addTicket(ticket, function(err, res) {
+        it("should return a 404 code", function (done) {
+          moraleApi.addTicket(ticket, function (err, res) {
             should.exist(err);
             err.should.have.status(404);
             done();
           });
         });
-        it("should return an unauthorized message", function(done) {
-          moraleApi.addTicket(ticket, function(err, res) {
+        it("should return an unauthorized message", function (done) {
+          moraleApi.addTicket(ticket, function (err, res) {
             should.exist(err);
             err.message.should.equal("Project does not exist");
             done();
           });
         });
-        it("should not return data", function(done) {
-          moraleApi.addTicket(ticket, function(err, res) {
+        it("should not return data", function (done) {
+          moraleApi.addTicket(ticket, function (err, res) {
             should.not.exist(res);
             done();
           });
         });
       });
 
-      describe("with a valid ticket identifier", function() {
+      describe("with a valid ticket identifier", function () {
         var ticketIdentifier = 12345;
 
-        describe("getting a specific ticket", function() {
-          beforeEach(function(done) {
+        describe("getting a specific ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var nockResponseData = {
-                error: "Project does not exist",
+                error: "Project does not exist"
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(404, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -784,45 +783,45 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return a 404 code", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return a 404 code", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.should.have.status(404);
               done();
             });
           });
-          it("should return an unauthorized message", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return an unauthorized message", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.message.should.equal("Project does not exist");
               done();
             });
           });
-          it("should not return data", function(done) {
-            moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should not return data", function (done) {
+            moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
               should.not.exist(res);
               done();
             });
           });
         });
 
-        describe("updating a ticket", function() {
+        describe("updating a ticket", function () {
           var ticket = {
             type: "task",
             title: "An Updated Ticket Title",
             description: "And we will add this new description",
             project_id: projectId,
-            identifier: ticketIdentifier,
+            identifier: ticketIdentifier
           };
 
-          beforeEach(function(done) {
+          beforeEach(function (done) {
             if (nock) {
               var commandString = util.format("#%s: type: %s title: %s description: %s", ticket.identifier, ticket.type, ticket.title, ticket.description);
               var nockRequestData = {
-                command: commandString,
+                command: commandString
               };
               var nockResponseData = {
-                error: "Project does not exist",
+                error: "Project does not exist"
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(404, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -831,36 +830,36 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return a 404 code", function(done) {
-            moraleApi.updateTicket(ticket, function(err, res) {
+          it("should return a 404 code", function (done) {
+            moraleApi.updateTicket(ticket, function (err, res) {
               should.exist(err);
               err.should.have.status(404);
               done();
             });
           });
-          it("should return an unauthorized message", function(done) {
-            moraleApi.updateTicket(ticket, function(err, res) {
+          it("should return an unauthorized message", function (done) {
+            moraleApi.updateTicket(ticket, function (err, res) {
               should.exist(err);
               err.message.should.equal("Project does not exist");
               done();
             });
           });
-          it("should not return data", function(done) {
-            moraleApi.updateTicket(ticket, function(err, res) {
+          it("should not return data", function (done) {
+            moraleApi.updateTicket(ticket, function (err, res) {
               should.not.exist(res);
               done();
             });
           });
         });
 
-        describe("archiving a ticket", function() {
-          beforeEach(function(done) {
+        describe("archiving a ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var nockRequestData = {
-                command: util.format("a #%s:", ticketIdentifier),
+                command: util.format("a #%s:", ticketIdentifier)
               };
               var nockResponseData = {
-                error: "Project does not exist",
+                error: "Project does not exist"
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(404, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -869,36 +868,36 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return a 404 code", function(done) {
-            moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return a 404 code", function (done) {
+            moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.should.have.status(404);
               done();
             });
           });
-          it("should return an unauthorized message", function(done) {
-            moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return an unauthorized message", function (done) {
+            moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.message.should.equal("Project does not exist");
               done();
             });
           });
-          it("should not return data", function(done) {
-            moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should not return data", function (done) {
+            moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
               should.not.exist(res);
               done();
             });
           });
         });
 
-        describe("deleting a ticket", function() {
-          beforeEach(function(done) {
+        describe("deleting a ticket", function () {
+          beforeEach(function (done) {
             if (nock) {
               var nockRequestData = {
-                command: util.format("d #%s:", ticketIdentifier),
+                command: util.format("d #%s:", ticketIdentifier)
               };
               var nockResponseData = {
-                error: "Project does not exist",
+                error: "Project does not exist"
               };
               nock(util.format('https://%s.teammorale.com', moraleApi.options.subdomain)).post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(404, JSON.stringify(nockResponseData), {
                 'content-type': 'application/json'
@@ -907,22 +906,22 @@ describe("When accessing the Ticket API", function() {
             done();
           });
 
-          it("should return a 404 code", function(done) {
-            moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return a 404 code", function (done) {
+            moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.should.have.status(404);
               done();
             });
           });
-          it("should return an unauthorized message", function(done) {
-            moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should return an unauthorized message", function (done) {
+            moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
               should.exist(err);
               err.message.should.equal("Project does not exist");
               done();
             });
           });
-          it("should not return data", function(done) {
-            moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
+          it("should not return data", function (done) {
+            moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
               should.not.exist(res);
               done();
             });
@@ -932,44 +931,42 @@ describe("When accessing the Ticket API", function() {
       });
     });
 
-    describe("and with an invalid projectId,", function() {
+    describe("and with an invalid projectId,", function () {
       var projectId = "badProjectIdValue";
 
-      describe("getting a list of tickets", function() {
-        it("should throw an error", function() {
-          var getTicketWrapper = function() {
-            return moraleApi.getTickets(projectId, function() {
+      describe("getting a list of tickets", function () {
+        it("should throw an error", function () {
+          var getTicketWrapper = function () {
+            return moraleApi.getTickets(projectId, function () {
               console.log("This should not run");
-            })
+            });
           };
-          getTicketWrapper.should.
-          throw ("FAIL: INVALID PROJECTID");
+          getTicketWrapper.should.throw("FAIL: INVALID PROJECTID");
         });
       });
 
-      describe("getting a specific ticket", function() {
+      describe("getting a specific ticket", function () {
         var ticketIdentifier = 12345;
 
-        it("should throw an error", function() {
-          var getTicketWrapper = function() {
-            return moraleApi.getTicket(projectId, ticketIdentifier, function() {
+        it("should throw an error", function () {
+          var getTicketWrapper = function () {
+            return moraleApi.getTicket(projectId, ticketIdentifier, function () {
               console.log("This should not run");
-            })
+            });
           };
-          getTicketWrapper.should.
-          throw ("FAIL: INVALID PROJECTID");
+          getTicketWrapper.should.throw("FAIL: INVALID PROJECTID");
         });
       });
-    })
+    });
   });
 
-  describe("with invalid Morale credentials,", function() {
+  describe("with invalid Morale credentials,", function () {
     var moraleApi = morale("invalid-account", "invalidKey");
 
-    describe("getting a list of tickets", function() {
+    describe("getting a list of tickets", function () {
       var projectId = 70401;
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           nock('https://invalid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets').reply(401, "", {
             'content-type': 'text/plain'
@@ -978,33 +975,33 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.getTickets(projectId, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.getTickets(projectId, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.getTickets(projectId, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.getTickets(projectId, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.getTickets(projectId, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.getTickets(projectId, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
 
-    describe("getting a specific ticket", function() {
+    describe("getting a specific ticket", function () {
       var projectId = 70401;
       var ticketIdentifier = 800401;
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           nock('https://invalid-account.teammorale.com').get('/api/v1/projects/' + projectId + '/tickets/' + ticketIdentifier).reply(401, "", {
             'content-type': 'text/plain'
@@ -1013,40 +1010,40 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.getTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.getTicket(projectId, ticketIdentifier, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
 
-    describe("adding a ticket", function() {
+    describe("adding a ticket", function () {
       var ticket = {
         type: "task",
         title: "A Brand New Ticket",
-        project_id: 70401,
+        project_id: 70401
       };
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var commandString = util.format("type: %s title: %s", ticket.type, ticket.title);
           var nockRequestData = {
-            command: commandString,
+            command: commandString
           };
           nock('https://invalid-account.teammorale.com').post('/api/v1/projects/' + ticket.project_id + '/tickets', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
@@ -1055,41 +1052,41 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.addTicket(ticket, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.addTicket(ticket, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.addTicket(ticket, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.addTicket(ticket, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.addTicket(ticket, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.addTicket(ticket, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
 
-    describe("updating a ticket", function() {
+    describe("updating a ticket", function () {
       var ticket = {
         type: "task",
         title: "An Updated Ticket",
         project_id: 70401,
-        identifier: 123,
+        identifier: 123
       };
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var commandString = util.format("#%s: type: %s title: %s", ticket.identifier, ticket.type, ticket.title);
           var nockRequestData = {
-            command: commandString,
+            command: commandString
           };
           nock('https://invalid-account.teammorale.com').post('/api/v1/projects/' + ticket.project_id + '/tickets', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
@@ -1098,36 +1095,36 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.updateTicket(ticket, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.updateTicket(ticket, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.updateTicket(ticket, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.updateTicket(ticket, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.updateTicket(ticket, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.updateTicket(ticket, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
 
-    describe("archiving a ticket", function() {
+    describe("archiving a ticket", function () {
       var projectId = 70401;
       var ticketIdentifier = 800401;
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var nockRequestData = {
-            command: util.format("a #%s:", ticketIdentifier),
+            command: util.format("a #%s:", ticketIdentifier)
           };
           nock('https://invalid-account.teammorale.com').post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
@@ -1136,36 +1133,36 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.archiveTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.archiveTicket(projectId, ticketIdentifier, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
 
-    describe("deleting a ticket", function() {
+    describe("deleting a ticket", function () {
       var projectId = 70401;
       var ticketIdentifier = 800401;
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var nockRequestData = {
-            command: util.format("d #%s:", ticketIdentifier),
+            command: util.format("d #%s:", ticketIdentifier)
           };
           nock('https://invalid-account.teammorale.com').post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
@@ -1174,37 +1171,37 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.deleteTicket(projectId, ticketIdentifier, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.deleteTicket(projectId, ticketIdentifier, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
 
-    describe("running a ticket command", function() {
+    describe("running a ticket command", function () {
       var projectId = 70401;
       var ticketIdentifier = 800401;
       var commandString = util.format("archive #%s:", ticketIdentifier);
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var nockRequestData = {
-            command: commandString,
+            command: commandString
           };
           nock('https://invalid-account.teammorale.com').post('/api/v1/projects/' + projectId + '/tickets', JSON.stringify(nockRequestData)).reply(401, "", {
             'content-type': 'text/plain'
@@ -1213,22 +1210,22 @@ describe("When accessing the Ticket API", function() {
         done();
       });
 
-      it("should return a 401 code", function(done) {
-        moraleApi.runTicketCommand(projectId, commandString, function(err, res) {
+      it("should return a 401 code", function (done) {
+        moraleApi.runTicketCommand(projectId, commandString, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an unauthorized message", function(done) {
-        moraleApi.runTicketCommand(projectId, commandString, function(err, res) {
+      it("should return an unauthorized message", function (done) {
+        moraleApi.runTicketCommand(projectId, commandString, function (err, res) {
           should.exist(err);
           err.message.should.equal("Unauthorized");
           done();
         });
       });
-      it("should not return data", function(done) {
-        moraleApi.runTicketCommand(projectId, commandString, function(err, res) {
+      it("should not return data", function (done) {
+        moraleApi.runTicketCommand(projectId, commandString, function (err, res) {
           should.not.exist(res);
           done();
         });
@@ -1237,14 +1234,14 @@ describe("When accessing the Ticket API", function() {
   });
 });
 
-describe("Building a ticket command", function() {
+describe("Building a ticket command", function () {
   var moraleApi = morale('doesnt', 'matter');
-  moraleApi.runTicketCommand = function(projectId, command, callback) {
+  moraleApi.runTicketCommand = function (projectId, command, callback) {
     return command;
   };
   var command;
 
-  describe("with a valid ticket object", function() {
+  describe("with a valid ticket object", function () {
     var ticket = {
       type: "task",
       title: "Create forgot password page",
@@ -1254,15 +1251,15 @@ describe("Building a ticket command", function() {
       assigned_to: "Jay",
       priority: 2,
       project_id: 101,
-      someOtherKey: "someValue",
+      someOtherKey: "someValue"
     };
 
-    beforeEach(function(done) {
-      command = moraleApi.updateTicket(ticket, function() {});
+    beforeEach(function (done) {
+      command = moraleApi.updateTicket(ticket, function () {});
       done();
     });
 
-    it("should include acceptable properties", function() {
+    it("should include acceptable properties", function () {
       command.should.include("type: task");
       command.should.include("title: Create forgot password page");
       command.should.include("description: ");
@@ -1270,11 +1267,11 @@ describe("Building a ticket command", function() {
       command.should.include("assigned_to: Jay");
       command.should.include("priority: 2");
     });
-    it("should not include blocked properties", function() {
+    it("should not include blocked properties", function () {
       command.should.not.include("identifier: ");
       command.should.not.include("project_id: ");
     });
-    it("should not include unknown properties", function() {
+    it("should not include unknown properties", function () {
       command.should.not.include("someOtherKey: ");
     });
   });
