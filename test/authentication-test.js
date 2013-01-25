@@ -1,17 +1,17 @@
 var nock = require('nock'),
-    util = require('util'),
-    morale = require('../index.js'),
-    mocha = require('mocha'),
-    should = require('should');
+  util = require('util'),
+  morale = require('../index.js'),
+  mocha = require('mocha'),
+  should = require('should');
 
-describe("When requesting an API Key against Morale", function() {
-  describe("with a valid Morale subdomain,", function() {
+describe("When requesting an API Key against Morale", function () {
+  describe("with a valid Morale subdomain,", function () {
     var subdomain = "validSubdomain";
-    describe("with valid Morale credentials,", function() {
+    describe("with valid Morale credentials,", function () {
       var apiKey = "AbCdEfGh123456";
       var email = "someUser@testemail.com";
       var password = "validPassword";
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var nockRequestData = util.format("email=%s&password=%s", email, password);
           var nockResponseData = {
@@ -24,19 +24,19 @@ describe("When requesting an API Key against Morale", function() {
         }
         done();
       });
-      it("should return an API token", function(done) {
-        morale.GetApiToken(subdomain, email, password, function(err, res) {
-          if (err) return done(err);
+      it("should return an API token", function (done) {
+        morale.GetApiToken(subdomain, email, password, function (err, res) {
+          if (err) { return done(err); }
           res.should.have.property("api_key", apiKey);
           done();
         });
       });
     });
-    describe("with invalid Morale credentials,", function() {
+    describe("with invalid Morale credentials,", function () {
       var apiKey = "AbCdEfGh123456";
       var email = "someUser@testemail.com";
       var password = "invalidPassword";
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         if (nock) {
           var nockRequestData = util.format("email=%s&password=%s", email, password);
           var nockResponseData = {
@@ -49,34 +49,34 @@ describe("When requesting an API Key against Morale", function() {
         }
         done();
       });
-      it("should return a 401 code", function(done) {
-        morale.GetApiToken(subdomain, email, password, function(err, res) {
+      it("should return a 401 code", function (done) {
+        morale.GetApiToken(subdomain, email, password, function (err, res) {
           should.exist(err);
           err.should.have.status(401);
           done();
         });
       });
-      it("should return an invalid credentials message", function(done) {
-        morale.GetApiToken(subdomain, email, password, function(err, res) {
+      it("should return an invalid credentials message", function (done) {
+        morale.GetApiToken(subdomain, email, password, function (err, res) {
           should.exist(err);
           err.message.should.equal("Invalid credentials");
           done();
         });
       });
-      it("should not return data", function(done) {
-        morale.GetApiToken(subdomain, email, password, function(err, res) {
+      it("should not return data", function (done) {
+        morale.GetApiToken(subdomain, email, password, function (err, res) {
           should.not.exist(res);
           done();
         });
       });
     });
   });
-  describe("with an invalid Morale subdomain,", function() {
+  describe("with an invalid Morale subdomain,", function () {
     var subdomain = "thisShouldNotExist";
     var apiKey = "AbCdEfGh123456";
     var email = "someUser@testemail.com";
     var password = "validPassword";
-    beforeEach(function(done) {
+    beforeEach(function (done) {
       if (nock) {
         var nockRequestData = util.format("email=%s&password=%s", email, password);
         var nockResponseData = {
@@ -89,22 +89,22 @@ describe("When requesting an API Key against Morale", function() {
       }
       done();
     });
-    it("should return a 404 code", function(done) {
-      morale.GetApiToken(subdomain, email, password, function(err, res) {
+    it("should return a 404 code", function (done) {
+      morale.GetApiToken(subdomain, email, password, function (err, res) {
         should.exist(err);
         err.should.have.status(404);
         done();
       });
     });
-    it("should return an invalid account message", function(done) {
-      morale.GetApiToken(subdomain, email, password, function(err, res) {
+    it("should return an invalid account message", function (done) {
+      morale.GetApiToken(subdomain, email, password, function (err, res) {
         should.exist(err);
         err.message.should.equal(util.format("Account '%s' does not exist", subdomain.toLowerCase()));
         done();
       });
     });
-    it("should not return data", function(done) {
-      morale.GetApiToken(subdomain, email, password, function(err, res) {
+    it("should not return data", function (done) {
+      morale.GetApiToken(subdomain, email, password, function (err, res) {
         should.not.exist(res);
         done();
       });
